@@ -1,13 +1,16 @@
-type Test {
+type Todo {
   id: ID!
-  message: String!
+  text: String
+  completed: Boolean
 }
 
 extend type Query {
-  test(id: ID!): Test
-  tests: [Test]
+  get_todo(id: ID!): Todo
+  get_todos: [Todo]
 }
 
 extend type Mutation {
-  test_mutation(id: ID!, message: String!): Test
+  create_todo(id: ID!, text: String!, completed: Boolean!): Todo
+  update_todo(id: ID!, completed: Boolean!): Todo
+  delete_todo(id: ID!): Todo
 }

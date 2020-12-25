@@ -1,7 +1,7 @@
-import test from './test'
-import tests from './tests'
+import get_todo from './get_todo'
+import get_todos from './get_todos'
 
 export default {
-  test,
-  tests
+  get_todo,
+  get_todos
 }

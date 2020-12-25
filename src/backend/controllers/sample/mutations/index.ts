@@ -1,5 +1,9 @@
-import test_mutation from './test_mutation'
+import create_todo from './create_todo'
+import update_todo from './update_todo'
+import delete_todo from './delete_todo'
 
 export default {
-  test_mutation
+  create_todo,
+  update_todo,
+  delete_todo
 }
