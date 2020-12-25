@@ -1,10 +1,8 @@
 import { Todo } from '../../../_types/todo'
-//import mongoose from 'mongoose'
+const Task = require('../../../models/todo')
 
-export default (_root: undefined, args: { id: string }): Todo => {
-  return {
-    id: args.id,
-    text: `We are getting todo number ${args.id}.`,
-    completed: false
-  }
+export default async (_root: undefined, args: { id: string }): Promise<Todo> => {
+  return await Task.findOne(
+    {_id: args.id}
+  )
 }

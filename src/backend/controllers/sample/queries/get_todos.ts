@@ -1,21 +1,6 @@
 import { Todo } from '../../../_types/todo'
+const Task = require('../../../models/todo')
 
-export default (): Todo[] => {
-  return [
-    {
-      id: '1',
-      text: 'Hello',
-      completed: false
-    },
-    {
-      id: '2',
-      text: 'Hello2',
-      completed: true
-    },
-    {
-      id: '3',
-      text: 'Hello3',
-      completed: false
-    }
-  ]
+export default async (): Promise<Todo[]> => {
+  return Task.find({})
 }
