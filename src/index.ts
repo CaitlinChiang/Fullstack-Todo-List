@@ -1,5 +1,6 @@
 require('dotenv').config()
 import 'graphql-import-node'
+import mongoose from 'mongoose'
 
 import { ApolloServer, AuthenticationError, ForbiddenError, UserInputError } from 'apollo-server-express'
 import { GraphQLFormattedError, GraphQLError } from 'graphql'
@@ -79,6 +80,13 @@ nextJSApp.prepare().then(() => {
   })
 
   server.applyMiddleware({ app, path: '/graphql' })
+
+  try {
+    mongoose.connect("mongodb+srv://caitlin:caitlin_dashboard-todo@todo-items.uf8j2.mongodb.net/todos?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true})
+  }
+  catch(err) {
+    console.log(err)
+  }
 
   app.use((req, res) => {
     const parsedUrl = parse(req.url, true)

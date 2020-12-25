@@ -1,9 +1,7 @@
 import { Todo } from '../../../_types/todo'
+import { Context } from '../../../_types/context'
+const Task = require('../../../models/todo')
 
-export default (_root: undefined, args: { id: string }): Todo => {
-  return {
-    id: args.id,
-    text: `We are deleting todo number ${args.id}.`,
-    completed: false
-  }
+export default async (_root: undefined, args: { id: string }, context: Context): Promise<Todo> => {
+  return await Task.deleteOne({_id: args.id})
 }

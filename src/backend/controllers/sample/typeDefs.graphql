@@ -1,7 +1,7 @@
 type Todo {
   id: ID!
-  text: String
-  completed: Boolean
+  text: String!
+  completed: Boolean!
 }
 
 extend type Query {
@@ -10,7 +10,7 @@ extend type Query {
 }
 
 extend type Mutation {
-  create_todo(id: ID!, text: String!, completed: Boolean!): Todo
+  create_todo(text: String!, completed: Boolean!): Todo
   update_todo(id: ID!, completed: Boolean!): Todo
   delete_todo(id: ID!): Todo
 }
