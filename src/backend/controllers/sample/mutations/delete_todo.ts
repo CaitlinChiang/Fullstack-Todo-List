@@ -3,5 +3,6 @@ import { Context } from '../../../_types/context'
 const Task = require('../../../models/todo')
 
 export default async (_root: undefined, args: { id: string }, context: Context): Promise<Todo> => {
-  return await Task.deleteOne({_id: args.id})
+  await Task.deleteOne({_id: args.id})
+  return null
 }

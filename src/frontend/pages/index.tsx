@@ -1,10 +1,17 @@
-import { Todo, AddTodoProps, TodoItemProps, TodoListProps } from 'frontend/pages/types'
+import { Todo, TodoItemProps, TodoListProps } from 'frontend/pages/types'
 import { makeStyles } from '@material-ui/core/styles'
 import { NextPage } from 'next'
 import { Typography, TextField, ListItem, Checkbox, Button } from '@material-ui/core'
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useState, useEffect } from 'react'
 import AppBar from '../layouts/moduleViewer/AppBar'
-import CardContainer from 'frontend/components/CardContainer'
+import CardContainer from 'frontend/components/_common/CardContainer'
+
+import { useMutation, useQuery } from '@apollo/client'
+
+import get_todos from '../components/todo/query'
+import create_todo from '../components/todo/createMutation'
+import update_todo from '../components/todo/updateMutation'
+import delete_todo from '../components/todo/deleteMutation'
  
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -16,16 +23,18 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const AddTodo: React.FC<AddTodoProps> = ({ addTodo }) => {
+const AddTodo: React.FC = () => {
   const [newTodo, setNewTodo] = useState("")
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewTodo(event.target.value)
-  } 
+  }
 
-  const handleSubmit = (event: React.FormEvent<HTMLButtonElement>) => {
+  const [add_todo] = useMutation(create_todo)
+
+  const handleAdd = (event: React.FormEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    addTodo(newTodo)
+    add_todo({variables: { text: newTodo }})
     setNewTodo("")
   }
 
@@ -45,35 +54,47 @@ const AddTodo: React.FC<AddTodoProps> = ({ addTodo }) => {
         color={'primary'}
         variant={'contained'}
         type="submit"
-        onClick={handleSubmit}
+        onClick={handleAdd}
       >Add Todo</Button>
     </form>
   )
 }
 
-const TodoItem: React.FC<TodoItemProps> = ({ todo, toggleState, deleteTodo }) => {
+const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
+  const [check_todo] = useMutation(update_todo)
+  const [remove_todo]:any = useMutation(delete_todo)
+
+  const handleUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
+    check_todo({ variables: { id: todo.id, completed: !todo.completed }})
+  }
+
+  const handleDelete = (event: React.MouseEvent<HTMLSpanElement>) => {
+    event.preventDefault()
+    remove_todo({variables: { id: todo.id }})
+  }
+
   return (
     <ListItem>
       <label style={{ textDecoration: todo.completed ? "line-through" : "none", fontSize: '17px' }} >
         <Checkbox 
           checked={todo.completed}
-          onChange={() => toggleState(todo)}
+          onChange={handleUpdate}
         />
         {todo.text}
       </label>
       <span 
-        style={{ marginLeft: '400px', position: 'fixed', cursor: 'pointer' }}
-        onClick={() => deleteTodo(todo)}
+        style={{ marginLeft: '400px', cursor: 'pointer' }}
+        onClick={handleDelete}
       >&#10006;</span>
     </ListItem>
   )
 }
 
-const TodoList: React.FC<TodoListProps> = ({ todos, toggleState, deleteTodo }) => {
+const TodoList: React.FC<TodoListProps> = ({ todos }) => {
   return (
     <ul style={{ listStyleType: 'none' }}>
       {todos.map(todo => {
-        return <TodoItem todo={todo} toggleState={toggleState} deleteTodo={deleteTodo} />
+        return <TodoItem key={todo.id} todo={todo} />
       })}
     </ul>
   )
@@ -81,31 +102,17 @@ const TodoList: React.FC<TodoListProps> = ({ todos, toggleState, deleteTodo }) =
 
 const Home: NextPage = (): ReactElement => {
   const classes = useStyles()
+  const todos_data = useQuery(get_todos)
+
   const [todolist, setTodolist] = useState([])
 
-  const toggleState = (selectedTodo: Todo) => {
-    const newTodoList = todolist.map(todo => {
-      if (todo === selectedTodo) {
-        return {
-          ...todo,
-          completed: !todo.completed
-        }
-      }
-      return todo
-    })
-    setTodolist(newTodoList)
-  }
-
-  const addTodo = (newTodo: string) => {
-    newTodo.trim() !== "" && setTodolist([...todolist, { text: newTodo, completed: false }])
-  }
-
-  const deleteTodo = (selectedTodo: Todo) => {
-    const index = todolist.indexOf(selectedTodo)
-    todolist.splice(index, 1)
-    const newTodoList = todolist.map(todo => todo)
-    setTodolist(newTodoList)
-  }
+  useEffect(() => {
+    if (!todos_data.loading) {
+      const todoItems: Todo[] = todos_data.data.get_todos || []
+      setTodolist(todoItems)
+      console.log(todoItems)
+    }
+  })
 
   return (
     <>
@@ -118,8 +125,8 @@ const Home: NextPage = (): ReactElement => {
       <CardContainer
         content={
           <>
-            <AddTodo addTodo={addTodo} />
-            <TodoList todos={todolist} toggleState={toggleState} deleteTodo={deleteTodo} />
+            <AddTodo />
+            <TodoList todos={todolist} />
           </>
         }
       />
