@@ -82,7 +82,7 @@ nextJSApp.prepare().then(() => {
   server.applyMiddleware({ app, path: '/graphql' })
 
   try {
-    mongoose.connect("mongodb+srv://caitlin:caitlin_dashboard-todo@todo-items.uf8j2.mongodb.net/todos?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true})
+    mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   }
   catch(err) {
     console.log(err)

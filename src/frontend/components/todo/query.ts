@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 const get_todos = gql`
   query {
-    get_todos {
+    todos: get_todos {
       id
       text
       completed

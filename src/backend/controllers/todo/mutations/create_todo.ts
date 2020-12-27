@@ -1,6 +1,6 @@
 import { Todo } from '../../../_types/todo'
 import { Context } from '../../../_types/context'
-const Task = require('../../../models/todo')
+import Task from '../../../models/todo'
 
 export default async (_root: undefined, args: { text: string }, context: Context): Promise<Todo> => {
   const todo = new Task({

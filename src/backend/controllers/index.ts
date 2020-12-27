@@ -1,4 +1,4 @@
-import sample from './sample'
+import sample from './todo'
 import { gql } from 'apollo-server-express'
 
 const emptyDefs = gql`

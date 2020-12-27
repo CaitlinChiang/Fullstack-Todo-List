@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 const create_todo = gql`
   mutation($text: String!) {
-    create_todo(text: $text) {
+    todos: create_todo(text: $text) {
       id
       text
       completed
